@@ -6,7 +6,7 @@
  * Time: 08:15
  */
  
-namespace Netrix\ConfigurableSkuSwitch\Plugin\Magento\Swatches\Block\Product\Renderer;
+namespace Andering\ConfigurableDynamic\Plugin\Magento\Swatches\Block\Product\Renderer;
 
 class Configurable
 {
