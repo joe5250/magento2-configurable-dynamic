@@ -7,6 +7,6 @@
  */
 \Magento\Framework\Component\ComponentRegistrar::register(
     \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'Netrix_ConfigurableSkuSwitch',
+    'Andering_ConfigurableDynamic',
     __DIR__
 );
