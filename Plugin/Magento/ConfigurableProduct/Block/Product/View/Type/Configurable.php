@@ -6,7 +6,7 @@
  * Time: 08:15
  */
  
-namespace Netrix\ConfigurableSkuSwitch\Plugin\Magento\ConfigurableProduct\Block\Product\View\Type;
+namespace Andering\ConfigurableDynamic\Plugin\Magento\ConfigurableProduct\Block\Product\View\Type;
 
 class Configurable
 {
