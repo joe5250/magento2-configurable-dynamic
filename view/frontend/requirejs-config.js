@@ -6,10 +6,10 @@ var config = {
     config: {
         mixins: {
             'Magento_ConfigurableProduct/js/configurable': {
-                'Netrix_ConfigurableSkuSwitch/js/model/skuswitch': true
+                'Andering_ConfigurableSwitch/js/model/skuswitch': true
             },
 			'Magento_Swatches/js/swatch-renderer': {
-                'Netrix_ConfigurableSkuSwitch/js/model/swatch-skuswitch': true
+                'Andering_ConfigurableSwitch/js/model/swatch-skuswitch': true
             }
         }
     }
