@@ -3,30 +3,47 @@
  */
 
 define([
-    'jquery',
-    'mage/utils/wrapper'
+	'jquery',
+	'mage/utils/wrapper'
 ], function ($, wrapper) {
-    'use strict';
-    return function(targetModule){
+	'use strict';
+	return function(targetModule){
+		var reloadPrice = targetModule.prototype._reloadPrice;
+		targetModule.prototype.dynamic = {};
 
-        var reloadPrice = targetModule.prototype._reloadPrice;
-        targetModule.prototype.configurableSku = $('div.product-info-main .sku .value').html();
+		$('[data-dynamic]').each(function(){
+			var code = $(this).data('dynamic');
+			var value = $(this).html();
 
-        var reloadPriceWrapper = wrapper.wrap(reloadPrice, function(original){
-            //do extra stuff
-            var simpleSku = this.configurableSku;
+			targetModule.prototype.dynamic[code] = value;
+		});
 
-            if(this.simpleProduct){
-                simpleSku = this.options.spConfig.skus[this.simpleProduct];
-            }
+		var reloadPriceWrapper = wrapper.wrap(reloadPrice, function(original){
+			var dynamic = this.options.spConfig.dynamic;
+			console.log(dynamic);
+			for (var code in dynamic){
+				if (dynamic.hasOwnProperty(code)) {
+					var value = "";
+					var $placeholder = $('[data-dynamic='+code+']');
 
-            $('div.product-info-main .sku .value').html(simpleSku);
+					if(!$placeholder.length) {
+						continue;
+					}
 
-            //return original value
-            return original();
-        });
+					if(this.simpleProduct){
+						value = this.options.spConfig.dynamic[code][this.simpleProduct].value;
+					} else {
+						value = this.dynamic[code];
+					}
 
-        targetModule.prototype._reloadPrice = reloadPriceWrapper;
-        return targetModule;
-    };
+					$placeholder.html(value);
+				}
+			}
+
+			return original();
+		});
+
+		targetModule.prototype._reloadPrice = reloadPriceWrapper;
+		return targetModule;
+	};
 });

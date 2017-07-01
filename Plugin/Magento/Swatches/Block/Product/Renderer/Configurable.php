@@ -5,7 +5,7 @@
  * Date: 17-01-30
  * Time: 08:15
  */
- 
+
 namespace Andering\ConfigurableDynamic\Plugin\Magento\Swatches\Block\Product\Renderer;
 
 class Configurable
@@ -14,14 +14,21 @@ class Configurable
 
         $jsonResult = json_decode($result, true);
 
-        $jsonResult['skus'] = [];
-
         foreach ($subject->getAllowProducts() as $simpleProduct) {
-            $jsonResult['skus'][$simpleProduct->getId()] = $simpleProduct->getSku();
+        	$id = $simpleProduct->getId();
+        	foreach($simpleProduct->getAttributes() as $attribute) {
+				if(($attribute->getIsVisible() && $attribute->getIsVisibleOnFront()) || in_array($attribute->getAttributeCode(), ['sku','description']) ) {
+					$code = $attribute->getAttributeCode();
+					$value = (string)$attribute->getFrontend()->getValue($simpleProduct);
+					$jsonResult['dynamic'][$code][$id] = [
+						'value' => $value
+					];
+				}
+        	}
         }
 
         $result = json_encode($jsonResult);
-
         return $result;
+
     }
 }
