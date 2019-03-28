@@ -41,7 +41,7 @@ define([
 
 					if(this.simpleProduct){
 						value = this.options.spConfig.dynamic[code][this.simpleProduct].value;
-						attrs = this.options.spConfig.dynamic[code][this.simpleProduct].attr;
+						attrs = this.options.spConfig.dynamic[code][this.simpleProduct].attrs;
 					} else {
 						value = this.dynamic[code];
                         attrs = this.dynamicAttrs[code];
