@@ -10,20 +10,29 @@ define([
 	return function(targetModule){
 		var reloadPrice = targetModule.prototype._reloadPrice;
 		targetModule.prototype.dynamic = {};
+		targetModule.prototype.dynamicAttrs = [];
+
 		$('[data-dynamic]').each(function(){
 			var code = $(this).data('dynamic');
 			var value = $(this).html();
+			var attrs = [];
+
+			// Get the initial attributes value to be able to reset them if a user selects an option and then selects none again
+			$.each(this.attributes, function() {
+				attrs[this.name] = this.value;
+			});
 
 			targetModule.prototype.dynamic[code] = value;
+			targetModule.prototype.dynamicAttrs[code] = attrs;
 		});
 
 		var reloadPriceWrapper = wrapper.wrap(reloadPrice, function(original){
 			var dynamic = this.options.spConfig.dynamic;
-			console.log(dynamic, this.dynamic);
+
 			for (var code in dynamic){
 				if (dynamic.hasOwnProperty(code)) {
 					var value = "";
-					var attr = {};
+					var attrs = [];
 					var $placeholder = $('[data-dynamic='+code+']');
 
 					if(!$placeholder.length) {
@@ -32,17 +41,18 @@ define([
 
 					if(this.simpleProduct){
 						value = this.options.spConfig.dynamic[code][this.simpleProduct].value;
-						attr = this.options.spConfig.dynamic[code][this.simpleProduct].attr;
+						attrs = this.options.spConfig.dynamic[code][this.simpleProduct].attr;
 					} else {
 						value = this.dynamic[code];
+                        attrs = this.dynamicAttrs[code];
 					}
 
 					$placeholder.html(value);
 
 					// Set all attributes if we have some
-					if(attr != undefined) {
-						for(a in attr) {
-							$placeholder.attr(a, attr[a]);
+					if(attrs != undefined) {
+						for(a in attrs) {
+							$placeholder.attr(a, attrs[a]);
 						}
 					}
 				}
