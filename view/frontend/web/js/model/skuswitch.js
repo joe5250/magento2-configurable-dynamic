@@ -10,15 +10,11 @@ define([
 	return function(targetModule){
 		var reloadPrice = targetModule.prototype._reloadPrice;
 		targetModule.prototype.dynamic = {};
-		targetModule.prototype.dynamicCssClass = {};
-
 		$('[data-dynamic]').each(function(){
 			var code = $(this).data('dynamic');
 			var value = $(this).html();
-			var cssClass = $(this).attr('class');
 
 			targetModule.prototype.dynamic[code] = value;
-			targetModule.prototype.dynamicCssClass[code] = cssClass;
 		});
 
 		var reloadPriceWrapper = wrapper.wrap(reloadPrice, function(original){
@@ -27,7 +23,7 @@ define([
 			for (var code in dynamic){
 				if (dynamic.hasOwnProperty(code)) {
 					var value = "";
-					var cssClass = '';
+					var attr = {};
 					var $placeholder = $('[data-dynamic='+code+']');
 
 					if(!$placeholder.length) {
@@ -36,15 +32,19 @@ define([
 
 					if(this.simpleProduct){
 						value = this.options.spConfig.dynamic[code][this.simpleProduct].value;
-						cssClass = this.options.spConfig.dynamic[code][this.simpleProduct].cssClass == undefined ? '' : this.options.spConfig.dynamic[code][this.simpleProduct].cssClass;
+						attr = this.options.spConfig.dynamic[code][this.simpleProduct].attr;
 					} else {
 						value = this.dynamic[code];
-						cssClass = this.dynamicCssClass[code];
 					}
 
-					console.log(value, cssClass, dynamic[code]);
-
 					$placeholder.html(value);
+
+					// Set all attributes if we have some
+					if(attr != undefined) {
+						for(a in attr) {
+							$placeholder.attr(a, attr[a]);
+						}
+					}
 				}
 			}
 
