@@ -51,7 +51,7 @@ define([
 
 					// Set all attributes if we have some
 					if(attrs != undefined) {
-						for(a in attrs) {
+						for(var a in attrs) {
 							$placeholder.attr(a, attrs[a]);
 						}
 					}
