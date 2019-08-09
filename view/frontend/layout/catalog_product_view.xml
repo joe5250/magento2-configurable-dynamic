@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="product.info.details">
+            <block class="Magento\Framework\View\Element\Template" name="product.attributes.wrap" after="-" template="Andering_ConfigurableDynamic::attributes_wrap.phtml" />
+        </referenceBlock>
+
+        <move element="product.attributes" destination="product.attributes.wrap" />
+    </body>
+</page>
