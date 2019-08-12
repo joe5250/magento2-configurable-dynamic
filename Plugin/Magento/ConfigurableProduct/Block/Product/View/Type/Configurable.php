@@ -59,6 +59,7 @@ class Configurable
         /** @var Attributes $block */
         $block = $this->layout->createBlock(Attributes::class, '', $originalBlock->getData());
         $block->setProduct($product);
+        $block->setTemplate($originalBlock->getTemplate());
 
         return $block->toHtml();
     }
