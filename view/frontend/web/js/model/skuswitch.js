@@ -4,8 +4,9 @@
 
 define([
 	'jquery',
-	'mage/utils/wrapper'
-], function ($, wrapper) {
+	'mage/utils/wrapper',
+	'mage/apply/main'
+], function ($, wrapper, mage) {
 	'use strict';
 	return function(targetModule){
 		var reloadPrice = targetModule.prototype._reloadPrice;
@@ -57,6 +58,8 @@ define([
 					}
 				}
 			}
+
+			mage.apply();
 
 			return original();
 		});
