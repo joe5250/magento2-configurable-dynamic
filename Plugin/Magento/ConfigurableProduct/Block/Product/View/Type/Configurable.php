@@ -9,58 +9,61 @@
 namespace Andering\ConfigurableDynamic\Plugin\Magento\ConfigurableProduct\Block\Product\View\Type;
 
 use Andering\ConfigurableDynamic\Block\Product\View\Attributes;
+use Andering\ConfigurableDynamic\Helper\ConfigurableDynamicHelper;
 use Magento\Catalog\Model\Product;
 
 class Configurable
 {
-    private $layout;
 
-    public function __construct(\Magento\Framework\View\LayoutInterface $layout)
+    private $dynamicHelper;
+
+    public function __construct(ConfigurableDynamicHelper $dynamicHelper)
     {
-        $this->layout = $layout;
+        $this->dynamicHelper = $dynamicHelper;
     }
 
     public function afterGetJsonConfig(\Magento\ConfigurableProduct\Block\Product\View\Type\Configurable $subject, $result) {
 
-        $jsonResult = json_decode($result, true);
+        $jsonResult = $this->dynamicHelper->unserialize($result);
 
         foreach ($subject->getAllowProducts() as $simpleProduct) {
-        	$id = $simpleProduct->getId();
-        	foreach($simpleProduct->getAttributes() as $attribute) {
-				if(($attribute->getIsVisible() && $attribute->getIsVisibleOnFront()) || in_array($attribute->getAttributeCode(), ['sku','description']) ) {
-					$code = $attribute->getAttributeCode();
-					$value = (string)$attribute->getFrontend()->getValue($simpleProduct);
-					$jsonResult['dynamic'][$code][$id] = [
-						'value' => $value
-					];
-				}
-        	}
-
-            $jsonResult = $this->addSimpleAttributesBlock($simpleProduct, $jsonResult, $id);
+            $jsonResult = $this->addVisibleAttributes($simpleProduct, $jsonResult);
+            $jsonResult = $this->dynamicHelper->addBlock(
+        	    'product_attributes',
+                'product.attributes',
+                Attributes::class,
+                $jsonResult,
+                $simpleProduct
+                );
+        	$jsonResult = $this->addProductName($jsonResult, $simpleProduct);
         }
 
-        $result = json_encode($jsonResult);
+        $result = $this->dynamicHelper->serialize($jsonResult);
         return $result;
     }
 
-    private function addSimpleAttributesBlock(Product $simpleProduct, $jsonResult, int $id)
+    private function addProductName(array $config, Product $product): array
     {
-        $jsonResult['dynamic']['product_attributes'][$id] = [
-            'value' => $this->getProductAttributesBlockHtml($simpleProduct),
+        $config['dynamic']['product_name'][$product->getId()] = [
+            'value' => $product->getName(),
         ];
 
-        return $jsonResult;
+        return $config;
     }
 
-    private function getProductAttributesBlockHtml(Product $product)
+    private function addVisibleAttributes(Product $simpleProduct, $jsonResult)
     {
-        /** @var Attributes $originalBlock */
-        $originalBlock = $this->layout->getBlock('product.attributes');
-        /** @var Attributes $block */
-        $block = $this->layout->createBlock(Attributes::class, '', $originalBlock->getData());
-        $block->setProduct($product);
-        $block->setTemplate($originalBlock->getTemplate());
+        foreach ($simpleProduct->getAttributes() as $attribute) {
+            if (($attribute->getIsVisible() && $attribute->getIsVisibleOnFront()) || in_array($attribute->getAttributeCode(),
+                    ['sku', 'description'])) {
+                $code = $attribute->getAttributeCode();
+                $value = (string)$attribute->getFrontend()->getValue($simpleProduct);
+                $jsonResult['dynamic'][$code][$simpleProduct->getId()] = [
+                    'value' => $value
+                ];
+            }
+        }
 
-        return $block->toHtml();
-    }
+        return $jsonResult;
+}
 }
