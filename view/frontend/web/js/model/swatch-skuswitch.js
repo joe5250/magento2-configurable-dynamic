@@ -2,8 +2,9 @@
 /*global alert*/
 define([
     'jquery',
-    'mage/utils/wrapper'
-], function ($, wrapper) {
+    'mage/utils/wrapper',
+    'mage/apply/main'
+], function ($, wrapper, mage) {
     'use strict';
 
     return function(targetModule){
@@ -47,6 +48,8 @@ define([
                     $placeholder.html(value);
                 }
             }
+
+            mage.apply();
 
             return original();
         });
