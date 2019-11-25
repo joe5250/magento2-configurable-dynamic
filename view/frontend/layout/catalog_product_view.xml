@@ -2,7 +2,11 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <referenceBlock name="product.info.details">
+        <referenceBlock name="product.info.sku">
+            <action method="setTemplate">
+                <!-- Show "Choose options below" message for configurable products -->
+                <argument name="template" xsi:type="string">Andering_ConfigurableDynamic::product/view/attribute.phtml</argument>
+            </action>
         </referenceBlock>
     </body>
 </page>
